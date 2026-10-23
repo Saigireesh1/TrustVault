@@ -1,0 +1,64 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+Found 15 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: accounts, admin, audit, auth, contenttypes, documents, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying accounts.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying audit.0001_initial... OK
+  Applying documents.0001_initial... OK
+test_audit_event_cannot_be_deleted_through_model (audit.tests.AuditTrailTests.test_audit_event_cannot_be_deleted_through_model) ... ok
+test_audit_event_cannot_be_updated_through_model (audit.tests.AuditTrailTests.test_audit_event_cannot_be_updated_through_model) ... ok
+test_hash_chain_verifies_after_events (audit.tests.AuditTrailTests.test_hash_chain_verifies_after_events) ... ok
+test_tampered_event_breaks_chain_verification (audit.tests.AuditTrailTests.test_tampered_event_breaks_chain_verification) ... ok
+test_download_endpoint_denies_ungranted_user_and_audits (documents.tests.DocumentAuthorizationTests.test_download_endpoint_denies_ungranted_user_and_audits) ... ok
+test_edit_grant_allows_read_and_edit (documents.tests.DocumentAuthorizationTests.test_edit_grant_allows_read_and_edit) ... ok
+test_grant_revocation_endpoint_is_owner_only (documents.tests.DocumentAuthorizationTests.test_grant_revocation_endpoint_is_owner_only) ... ok
+test_owner_can_read_and_edit (documents.tests.DocumentAuthorizationTests.test_owner_can_read_and_edit) ... ok
+test_read_grant_does_not_allow_edit (documents.tests.DocumentAuthorizationTests.test_read_grant_does_not_allow_edit) ... ok
+test_revoke_is_immediate_for_next_request (documents.tests.DocumentAuthorizationTests.test_revoke_is_immediate_for_next_request) ... ok
+test_search_does_not_return_ungranted_document (documents.tests.DocumentAuthorizationTests.test_search_does_not_return_ungranted_document) ... FAIL
+test_ungranted_user_cannot_delete_document (documents.tests.DocumentAuthorizationTests.test_ungranted_user_cannot_delete_document) ... ok
+test_ungranted_user_cannot_edit_document (documents.tests.DocumentAuthorizationTests.test_ungranted_user_cannot_edit_document) ... ok
+test_ungranted_user_cannot_read (documents.tests.DocumentAuthorizationTests.test_ungranted_user_cannot_read) ... ok
+test_viewer_cannot_grant_access (documents.tests.DocumentAuthorizationTests.test_viewer_cannot_grant_access) ... ok
+
+======================================================================
+FAIL: test_search_does_not_return_ungranted_document (documents.tests.DocumentAuthorizationTests.test_search_does_not_return_ungranted_document)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\projects\trustvault_project\trustvault_project\documents\tests.py", line 57, in test_search_does_not_return_ungranted_document
+    self.assertNotContains(response, "Secret contract")
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : 'Secret contract' unexpectedly found in the following response
+b'<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">\n<title>Documents \xc2\xb7 TrustVault</title>\n<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n<style>body{background:#f5f7fb}.navbar-brand{font-weight:800;letter-spacing:.3px}.card{border:0;box-shadow:0 4px 18px rgba(20,35,60,.06)}.muted{color:#6c757d}</style></head>\n<body><nav class="navbar navbar-expand-lg navbar-dark" style="background:#14233f"><div class="container"><a class="navbar-brand" href="/">\xf0\x9f\x94\x90 TrustVault</a><div class="d-flex align-items-center gap-3 text-white">\n<span class="small">other \xc2\xb7 Viewer</span><a class="btn btn-sm btn-outline-light" href="/audit/">Audit</a><form method="post" action="/accounts/logout/"><input type="hidden" name="csrfmiddlewaretoken" value="ZVk4rEbclT15RgK1TojAL6DiiicbLCE9rRamIJJmktZ22g08hu1gLFDMrLSKlc76"><button class="btn btn-sm btn-light">Logout</button></form></div></div></nav>\n<main class="container py-4"><div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="h2 mb-1">Documents</h1><p class="muted mb-0">Only documents you own or have been granted appear here.</p></div></div>\n<div class="row g-4"><div class="col-lg-8"><div class="card p-3 mb-3"><form method="get" class="row g-2"><div class="col-md-4"><input class="form-control" name="q" placeholder="Search name" value="Secret contract"></div><div class="col-md-2"><input class="form-control" name="category" placeholder="Category" value=""></div><div class="col-md-2"><input class="form-control" name="owner" placeholder="Owner" value=""></div><div class="col-md-2"><input type="date" class="form-control" name="date_from" value="" title="From date"></div><div class="col-md-2"><button class="btn btn-dark w-100">Filter</button></div><div class="col-md-3"><input type="date" class="form-control" name="date_to" value="" title="To date"></div></form></div>\n<div class="card p-3"><h2 class="h5">Accessible files</h2><p class="muted mb-0">No accessible documents yet. Upload a document or ask its owner to grant access.</p></div></div>\n<div class="col-lg-4"><div class="card p-4"><h2 class="h5">Upload a document</h2><p class="small muted">Allowed: PDF, TXT, PNG, JPG \xc2\xb7 Maximum 10 MB</p><form method="post" enctype="multipart/form-data"><input type="hidden" name="csrfmiddlewaretoken" value="ZVk4rEbclT15RgK1TojAL6DiiicbLCE9rRamIJJmktZ22g08hu1gLFDMrLSKlc76"><div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" maxlength="200" required id="id_title"></div><div class="mb-3"><label class="form-label">Category</label><input type="text" name="category" class="form-control" maxlength="80" required id="id_category"></div><div class="mb-3"><label class="form-label">File</label><input type="file" name="file" class="form-control" required id="id_file"></div><button class="btn btn-primary w-100">Upload privately</button></form></div></div></div></main>\n<footer class="container pb-4 small muted">TrustVault \xc2\xb7 Private document access with an audit trail</footer></body></html>\n'
+
+----------------------------------------------------------------------
+Ran 15 tests in 20.865s
+
+FAILED (failures=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+
+  Applying sessions.0001_initial... OK
+System check identified no issues (0 silenced).

@@ -1,0 +1,323 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ document.title }} · TrustVault{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="mb-4">
+    <a href="{% url 'documents:list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left me-2"></i>Back to documents
+    </a>
+</div>
+
+<!-- Heading -->
+<div class="tv-page-heading">
+    <div class="tv-eyebrow">
+        <i class="bi bi-shield-lock me-1"></i> Document workspace
+    </div>
+    <h1 class="tv-page-title">{{ document.title }}</h1>
+    <p class="tv-page-description">
+        Review file information and manage available document actions.
+    </p>
+</div>
+
+<div class="row g-4 align-items-start">
+
+    <!-- Main document information -->
+    <div class="col-lg-7">
+
+        <div class="card mb-4">
+            <div class="card-body p-4">
+
+                <!-- File heading -->
+                <div class="d-flex align-items-start gap-3 mb-4">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                         style="width:64px;height:64px;background:#eff6ff;color:#2563eb;font-size:1.8rem;">
+                        {% if document.original_filename|lower|slice:"-4:" == ".pdf" %}
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        {% elif document.original_filename|lower|slice:"-4:" == ".txt" %}
+                            <i class="bi bi-file-earmark-text"></i>
+                        {% elif document.original_filename|lower|slice:"-4:" == ".png" or document.original_filename|lower|slice:"-4:" == ".jpg" %}
+                            <i class="bi bi-file-earmark-image"></i>
+                        {% else %}
+                            <i class="bi bi-file-earmark"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex-grow-1 min-w-0">
+                        <span class="badge text-bg-primary mb-2">
+                            {{ document.category }}
+                        </span>
+                        <h2 class="h5 fw-bold mb-1">{{ document.title }}</h2>
+                        <p class="text-muted small mb-0 text-break">
+                            {{ document.original_filename }}
+                        </p>
+                    </div>
+
+                    <span class="badge text-bg-light border">
+                        <i class="bi bi-file-earmark me-1"></i>
+                        {{ document.size_bytes|filesizeformat }}
+                    </span>
+                </div>
+
+                <hr class="my-4" style="border-color:#e5eaf2;">
+
+                <!-- Metadata -->
+                <h3 class="h6 fw-bold mb-3">
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    Document information
+                </h3>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3 h-100" style="background:#f8faff;">
+                            <div class="small text-muted mb-2">
+                                <i class="bi bi-person me-1"></i> Document owner
+                            </div>
+                            <div class="fw-semibold text-break">
+                                {{ document.owner.username }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3 h-100" style="background:#f8faff;">
+                            <div class="small text-muted mb-2">
+                                <i class="bi bi-calendar3 me-1"></i> Uploaded on
+                            </div>
+                            <div class="fw-semibold">
+                                {{ document.created_at|date:"d M Y" }}
+                            </div>
+                            <div class="small text-muted">
+                                {{ document.created_at|date:"H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3 h-100" style="background:#f8faff;">
+                            <div class="small text-muted mb-2">
+                                <i class="bi bi-hdd me-1"></i> File size
+                            </div>
+                            <div class="fw-semibold">
+                                {{ document.size_bytes|filesizeformat }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3 h-100" style="background:#f8faff;">
+                            <div class="small text-muted mb-2">
+                                <i class="bi bi-tag me-1"></i> Category
+                            </div>
+                            <div class="fw-semibold text-break">
+                                {{ document.category }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SHA-256 fingerprint -->
+                <div class="p-3 rounded-3 mb-4"
+                     style="background:#f8faff;border:1px solid #e5eaf2;">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-fingerprint text-primary fs-5"></i>
+                        <span class="fw-bold">SHA-256 fingerprint</span>
+                    </div>
+
+                    <code class="small text-break">{{ document.sha256 }}</code>
+
+                    <p class="small text-muted mb-0 mt-2">
+                        Cryptographic fingerprint recorded for this document.
+                    </p>
+                </div>
+
+                <!-- Document actions -->
+                <h3 class="h6 fw-bold mb-3">Document actions</h3>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <form method="post" action="{% url 'documents:download' document.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-download me-2"></i>Download file
+                        </button>
+                    </form>
+
+                    {% if can_edit %}
+                        <a href="{% url 'documents:edit' document.pk %}"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-2"></i>Edit details
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if request.user.pk == document.owner_id %}
+                    <hr class="my-4" style="border-color:#e5eaf2;">
+
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                        <div>
+                            <div class="fw-bold text-danger">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Delete document
+                            </div>
+                            <div class="small text-muted">
+                                Remove this document from the active workspace.
+                            </div>
+                        </div>
+
+                        <form method="post"
+                              action="{% url 'documents:delete' document.pk %}"
+                              onsubmit="return confirm('Delete this document?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash3 me-1"></i>Delete
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- Security information -->
+        <div class="card">
+            <div class="card-body d-flex align-items-start gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                     style="width:44px;height:44px;background:#dcfce7;color:#15803d;font-size:1.3rem;">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+                    <h3 class="h6 fw-bold mb-1">Protected document access</h3>
+                    <p class="small text-muted mb-0">
+                        Document visibility and actions continue to follow your
+                        existing Django permission checks. Downloads use the
+                        protected download endpoint.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Access management: owners/managers only -->
+    {% if can_manage_grants %}
+        <div class="col-lg-5">
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-person-lock text-primary me-2"></i>
+                    Manage document access
+                </div>
+
+                <div class="card-body">
+                    <p class="small text-muted mb-4">
+                        Grant or update access for a named user. Revoking a grant
+                        prevents further access on subsequent requests.
+                    </p>
+
+                    <!-- Grant form -->
+                    <form method="post" action="{% url 'documents:grant' document.pk %}">
+                        {% csrf_token %}
+
+                        {% for field in grant_form %}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="small text-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-check me-2"></i>
+                            Grant / update access
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Existing grants -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="bi bi-people text-primary me-2"></i>
+                        Current access grants
+                    </span>
+                    <span class="badge text-bg-light border">
+                        {% with grants|length as grant_count %}
+                            {{ grant_count }}
+                        {% endwith %}
+                    </span>
+                </div>
+
+                <div class="card-body p-0">
+
+                    {% for grant in grants %}
+                        <div class="d-flex justify-content-between align-items-center gap-3 p-3 border-bottom">
+
+                            <div class="d-flex align-items-center gap-3 min-w-0">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                     style="width:42px;height:42px;background:#eff6ff;color:#2563eb;font-weight:800;">
+                                    {{ grant.user.username|first|upper }}
+                                </div>
+
+                                <div class="min-w-0">
+                                    <div class="fw-bold text-break">
+                                        {{ grant.user.username }}
+                                    </div>
+
+                                    <div class="small text-muted">
+                                        {{ grant.get_permission_display }} permission
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form method="post"
+                                  action="{% url 'documents:revoke' document.pk grant.user_id %}"
+                                  onsubmit="return confirm('Revoke access for {{ grant.user.username|escapejs }}?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-person-dash me-1"></i>Revoke
+                                </button>
+                            </form>
+
+                        </div>
+                    {% empty %}
+
+                        <div class="text-center px-3 py-4">
+                            <i class="bi bi-people text-muted fs-2"></i>
+                            <p class="fw-semibold mt-2 mb-1">No active grants</p>
+                            <p class="small text-muted mb-0">
+                                No additional users currently have access.
+                            </p>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

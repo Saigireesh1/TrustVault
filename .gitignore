@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.env
+.env.*
+!.env.example
+db.sqlite3
+db.sqlite3-*
+private_uploads/
+media/
+staticfiles/

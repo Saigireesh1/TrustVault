@@ -1,0 +1,428 @@
+
+{% extends "base.html" %}
+
+{% block title %}Sign in · TrustVault{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Login page */
+    .tv-login-wrapper {
+        min-height: 68vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 0;
+    }
+
+    .tv-login-layout {
+        width: 100%;
+        max-width: 980px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(16, 29, 53, 0.10);
+    }
+
+    .tv-login-brand-panel {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 42px;
+        overflow: hidden;
+        background: linear-gradient(145deg, #101d35 0%, #19365f 65%, #1d4ed8 130%);
+        color: #fff;
+    }
+
+    .tv-login-brand-panel::before {
+        content: "";
+        position: absolute;
+        width: 290px;
+        height: 290px;
+        right: -120px;
+        bottom: -120px;
+        border: 1px solid rgba(255, 255, 255, .13);
+        border-radius: 50%;
+        box-shadow: 0 0 0 35px rgba(255,255,255,.035),
+                    0 0 0 70px rgba(255,255,255,.025);
+        pointer-events: none;
+    }
+
+    .tv-login-brand-content,
+    .tv-login-brand-footer {
+        position: relative;
+        z-index: 1;
+    }
+
+    .tv-login-logo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 54px;
+        margin-bottom: 28px;
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 16px;
+        background: rgba(255,255,255,.10);
+        color: #bfdbfe;
+        font-size: 1.7rem;
+    }
+
+    .tv-login-brand-title {
+        max-width: 340px;
+        margin-bottom: 16px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -1px;
+    }
+
+    .tv-login-brand-description {
+        max-width: 340px;
+        color: #d4e1f4;
+        font-size: .98rem;
+        line-height: 1.8;
+    }
+
+    .tv-login-feature {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .tv-login-feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: rgba(147, 197, 253, .14);
+        color: #bfdbfe;
+    }
+
+    .tv-login-feature-title {
+        margin-bottom: 3px;
+        font-size: .9rem;
+        font-weight: 700;
+    }
+
+    .tv-login-feature-text {
+        margin-bottom: 0;
+        color: #bdcce1;
+        font-size: .8rem;
+        line-height: 1.6;
+    }
+
+    .tv-login-brand-footer {
+        margin-top: 38px;
+        color: #bdcce1;
+        font-size: .78rem;
+    }
+
+    .tv-login-form-panel {
+        padding: 48px 44px;
+        align-self: center;
+    }
+
+    .tv-login-eyebrow {
+        margin-bottom: 9px;
+        color: #2563eb;
+        font-size: .75rem;
+        font-weight: 800;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .tv-login-title {
+        margin-bottom: 9px;
+        color: #101d35;
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: -.7px;
+    }
+
+    .tv-login-subtitle {
+        margin-bottom: 30px;
+        color: #64748b;
+        line-height: 1.7;
+    }
+
+    .tv-login-form .form-control {
+        min-height: 48px;
+        padding: 12px 14px;
+        border-color: #dbe3ef;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .tv-login-form .form-control:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 .22rem rgba(37, 99, 235, .12);
+    }
+
+    .tv-login-form .form-label {
+        color: #334155;
+        font-size: .86rem;
+        font-weight: 700;
+    }
+
+    .tv-login-submit {
+        min-height: 48px;
+        margin-top: 8px;
+        border-radius: 10px;
+        background: #2563eb;
+        font-weight: 700;
+    }
+
+    .tv-login-submit:hover {
+        background: #1d4ed8;
+    }
+
+    .tv-login-security-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 24px;
+        padding: 13px;
+        border: 1px solid #dbeafe;
+        border-radius: 11px;
+        background: #eff6ff;
+        color: #475569;
+        font-size: .79rem;
+        line-height: 1.6;
+    }
+
+    .tv-login-security-note i {
+        margin-top: 2px;
+        color: #2563eb;
+    }
+
+    @media (max-width: 767.98px) {
+        .tv-login-wrapper {
+            min-height: auto;
+            padding: 8px 0 20px;
+        }
+
+        .tv-login-layout {
+            max-width: 480px;
+            grid-template-columns: 1fr;
+            border-radius: 18px;
+        }
+
+        .tv-login-brand-panel {
+            padding: 28px;
+        }
+
+        .tv-login-logo {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 18px;
+            font-size: 1.4rem;
+        }
+
+        .tv-login-brand-title {
+            font-size: 1.8rem;
+        }
+
+        .tv-login-feature {
+            margin-top: 18px;
+        }
+
+        .tv-login-brand-footer {
+            margin-top: 24px;
+        }
+
+        .tv-login-form-panel {
+            padding: 30px 24px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tv-login-wrapper">
+    <div class="tv-login-layout">
+
+        <!-- Branding panel -->
+        <section class="tv-login-brand-panel">
+            <div class="tv-login-brand-content">
+                <div class="tv-login-logo">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+
+                <div class="small fw-bold text-uppercase mb-3"
+                     style="color:#bfdbfe;letter-spacing:1.5px;">
+                    Welcome to TrustVault
+                </div>
+
+                <h1 class="tv-login-brand-title">
+                    Your documents.<br>
+                    Your control.
+                </h1>
+
+                <p class="tv-login-brand-description">
+                    A secure workspace for managing private documents,
+                    controlling access, and reviewing important activity.
+                </p>
+
+                <div class="tv-login-feature">
+                    <div class="tv-login-feature-icon">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                    <div>
+                        <div class="tv-login-feature-title">Private document access</div>
+                        <p class="tv-login-feature-text">
+                            Access follows your existing permissions.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tv-login-feature">
+                    <div class="tv-login-feature-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="tv-login-feature-title">Controlled sharing</div>
+                        <p class="tv-login-feature-text">
+                            Grant or revoke document access when authorized.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tv-login-feature">
+                    <div class="tv-login-feature-icon">
+                        <i class="bi bi-journal-check"></i>
+                    </div>
+                    <div>
+                        <div class="tv-login-feature-title">Auditable activity</div>
+                        <p class="tv-login-feature-text">
+                            Review recorded events and hash-chain status.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tv-login-brand-footer">
+                <i class="bi bi-shield-check me-1"></i>
+                TrustVault · Secure document management
+            </div>
+        </section>
+
+        <!-- Login form -->
+        <section class="tv-login-form-panel">
+            <div class="tv-login-eyebrow">Account access</div>
+            <h2 class="tv-login-title">Sign in</h2>
+            <p class="tv-login-subtitle">
+                Enter your credentials to access your secure workspace.
+            </p>
+
+            {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <div class="fw-bold mb-1">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Sign-in unsuccessful
+                    </div>
+                    <div class="small">
+                        Please check your username and password and try again.
+                    </div>
+                    {% if form.non_field_errors %}
+                        <div class="small mt-2">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <div class="alert alert-warning small" role="alert">
+                        Your current account cannot access that page.
+                        Please sign in with an authorized account.
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <form method="post"
+                  action="{% url 'login' %}"
+                  class="tv-login-form">
+                {% csrf_token %}
+
+                <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        Username
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"
+                              style="border-color:#dbe3ef;border-radius:10px 0 0 10px;">
+                            <i class="bi bi-person text-primary"></i>
+                        </span>
+                        <input
+                            type="text"
+                            name="{{ form.username.html_name }}"
+                            id="{{ form.username.id_for_label }}"
+                            class="form-control"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            value="{{ form.username.value|default:'' }}"
+                            required
+                            autofocus
+                            style="border-radius:0 10px 10px 0;"
+                        >
+                    </div>
+                    {% for error in form.username.errors %}
+                        <div class="small text-danger mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        Password
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"
+                              style="border-color:#dbe3ef;border-radius:10px 0 0 10px;">
+                            <i class="bi bi-key text-primary"></i>
+                        </span>
+                        <input
+                            type="password"
+                            name="{{ form.password.html_name }}"
+                            id="{{ form.password.id_for_label }}"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                            style="border-radius:0 10px 10px 0;"
+                        >
+                    </div>
+                    {% for error in form.password.errors %}
+                        <div class="small text-danger mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary tv-login-submit w-100">
+                    Sign in securely
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </form>
+
+            <div class="tv-login-security-note">
+                <i class="bi bi-shield-lock-fill"></i>
+                <div>
+                    <strong>Secure sign-in</strong><br>
+                    Your access is handled by Django authentication and your
+                    existing account permissions.
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+{% endblock %}
