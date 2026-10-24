@@ -8,11 +8,15 @@ from django.views.decorators.http import require_http_methods, require_POST
 from .forms import RegistrationForm
 
 
-def is_trustvault_admin(user):
+def can_approve_users(user):
+    """Only active owners, admins, and superusers can approve users."""
     return (
         user.is_authenticated
         and user.is_active
-        and user.is_trustvault_admin
+        and (
+            user.is_superuser
+            or user.role in ("ADMIN", "OWNER")
+        )
     )
 
 
@@ -42,7 +46,7 @@ def register(request):
     )
 
 
-@user_passes_test(is_trustvault_admin)
+@user_passes_test(can_approve_users)
 def pending_user_approvals(request):
     User = get_user_model()
 
@@ -59,7 +63,7 @@ def pending_user_approvals(request):
 
 
 @require_POST
-@user_passes_test(is_trustvault_admin)
+@user_passes_test(can_approve_users)
 def approve_user(request, user_id):
     User = get_user_model()
 
