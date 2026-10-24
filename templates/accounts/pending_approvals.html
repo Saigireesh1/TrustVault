@@ -1,0 +1,119 @@
+
+{% extends "base.html" %}
+
+{% block title %}Pending User Approvals · TrustVault{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h1 class="h3 fw-bold">Pending User Approvals</h1>
+            <p class="text-muted mb-0">
+                Review and approve new TrustVault accounts.
+            </p>
+        </div>
+
+        <a href="/" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">Registered Users Awaiting Approval</h2>
+                <span class="badge text-bg-warning">
+                    {{ pending_users|length }} pending
+                </span>
+            </div>
+
+            {% if pending_users %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Registration Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for pending_user in pending_users %}
+                                <tr>
+                                    <td class="fw-semibold">
+                                        <i class="bi bi-person-circle me-2 text-primary"></i>
+                                        {{ pending_user.username }}
+                                    </td>
+
+                                    <td>
+                                        {{ pending_user.date_joined|date:"d M Y, H:i" }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge text-bg-warning">
+                                            Awaiting Approval
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <form method="post"
+                                              action="{% url 'approve_user' pending_user.id %}"
+                                              onsubmit="return confirm('Approve this account?');">
+                                            {% csrf_token %}
+
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-sm">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Approve Account
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle text-success"
+                       style="font-size: 3rem;"></i>
+
+                    <h3 class="h5 mt-3">No Pending Accounts</h3>
+
+                    <p class="text-muted mb-0">
+                        There are no viewer accounts waiting for approval.
+                    </p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-shield-lock me-2"></i>
+        <strong>Security:</strong>
+        Approving an account enables login. Users must still have explicit
+        document permissions to access private documents.
+    </div>
+
+</div>
+{% endblock %}
