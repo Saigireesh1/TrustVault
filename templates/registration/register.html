@@ -1,55 +1,113 @@
 
 {% extends "base.html" %}
 
-{% block title %}Create Account · TrustVault{% endblock %}
+{% block title %}Create Account | TrustVault{% endblock %}
 
 {% block content %}
-<div class="container py-5" style="max-width: 520px;">
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-            <h1 class="h3">Create Account</h1>
-            <p class="text-muted">
-                Your account requires administrator approval before login.
-            </p>
+<div class="row justify-content-center py-4 py-lg-5">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
 
-            <form method="post">
-                {% csrf_token %}
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center
+                        rounded-4 bg-primary bg-opacity-10 text-primary mb-3"
+                 style="width: 68px; height: 68px;">
+                <i class="bi bi-shield-lock-fill fs-2"></i>
+            </div>
 
-                {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label"
-                               for="{{ field.id_for_label }}">
-                            {{ field.label }}
-                        </label>
-
-                        {{ field }}
-
-                        {% if field.help_text %}
-                            <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-
-                        {% for error in field.errors %}
-                            <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <button type="submit" class="btn btn-primary w-100">
-                    Register
-                </button>
-            </form>
-
-            <p class="mt-3 text-center">
-                Already have an account?
-                <a href="{% url 'login' %}">Sign in</a>
+            <div class="tv-eyebrow">Secure document management</div>
+            <h1 class="tv-page-title">Create your account</h1>
+            <p class="tv-page-description">
+                Join TrustVault to securely manage and share documents.
             </p>
         </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="alert alert-info d-flex gap-2 align-items-start">
+                    <i class="bi bi-info-circle-fill mt-1"></i>
+                    <div>
+                        <strong>Approval required</strong>
+                        <div class="small mt-1">
+                            Your account must be approved by an administrator
+                            before you can sign in.
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}"
+                                   class="form-label">
+                                {{ field.label }}
+                            </label>
+
+                            {% if field.field.widget.input_type == "password" %}
+                                <input
+                                    type="password"
+                                    name="{{ field.html_name }}"
+                                    id="{{ field.id_for_label }}"
+                                    class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                    {% if field.field.required %}required{% endif %}
+                                    autocomplete="new-password"
+                                >
+                            {% else %}
+                                <input
+                                    type="{{ field.field.widget.input_type|default:'text' }}"
+                                    name="{{ field.html_name }}"
+                                    id="{{ field.id_for_label }}"
+                                    class="form-control {% if field.errors %}is-invalid{% endif %}"
+                                    value="{{ field.value|default_if_none:'' }}"
+                                    {% if field.field.required %}required{% endif %}
+                                >
+                            {% endif %}
+
+                            {% if field.help_text %}
+                                <div class="form-text">
+                                    {{ field.help_text|safe }}
+                                </div>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit"
+                            class="btn btn-primary btn-lg w-100 mt-2">
+                        <i class="bi bi-person-plus-fill me-2"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="text-center border-top mt-4 pt-4">
+                    <span class="text-muted">Already registered?</span>
+                    <a href="{% url 'login' %}"
+                       class="fw-semibold ms-1">
+                        Sign in
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <p class="text-center text-muted small mt-4">
+            <i class="bi bi-shield-check text-primary me-1"></i>
+            Your security starts here.
+        </p>
+
     </div>
 </div>
 {% endblock %}
